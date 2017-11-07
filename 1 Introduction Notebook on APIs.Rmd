@@ -1,0 +1,127 @@
+---
+title: "Bittrex API"
+output: html_notebook
+---
+
+The aim of the project is to collect as precise as possible exchanges rates and other information on crypto-currencies (top 100) from their day of creation until today, in order to build potentially behavior models.
+
+For that, having as much information as possile might enable us to build models, however exchanges rates are depending on a potentially infinite number of parameters (individual behaviors, medias, economic growth, etc...) for which collecting data might be a incredible amount of work.
+
+So the first idea is to compare historical prices of different cryptocurrencies.
+
+
+Kaggle gives an interesting data set that shows historical daily prices of top 100 currencies. https://www.kaggle.com/natehenderson/top-100-cryptocurrency-historical-data
+This dataset is light (only a few MB), however, daily prices might be not precise enough to find out interesting "behavior" models.
+
+So, the second idea is to see if it is possible to collect more precise data thanks to APIs.
+
+Since I am trading on Bittrex.com, the first idea was to see what kind of information we can get from the Bittrex API (cryptocurrencies market platform)
+
+https://bittrex.com/Home/Api
+
+Ideally, managing to get the historical exchange rate (on a 30 min timestamp basis for example) of all cryptocurrencies on the platform from their day of creation until now would be perfect.
+
+
+```{r}
+library(jsonlite)
+library(glue)
+library(httr)
+```
+
+We are gonna try the method "/public/getmarkets"
+
+
+```{r}
+
+url <- glue("https://bittrex.com/api/v1.1/public/getmarkets")
+  
+res <- GET(url)
+  
+content(res)
+
+```
+
+
+```{r}
+
+fromJSON(url)
+```
+
+
+Now let's try the method /public/getticker
+
+Used to get the current tick values for a market.
+
+Parameters
+parameter	required	description
+market	required	a string literal for the market (ex: BTC-LTC)
+Request:
+https://bittrex.com/api/v1.1/public/getticker
+
+```{r}
+
+
+url <- glue("https://bittrex.com/api/v1.1/public/getticker?market=BTC-USDT")
+  
+res <- GET(url)
+  
+content(res)
+```
+
+```{r}
+fromJSON(url)
+```
+
+```{r}
+url <- glue("https://bittrex.com/api/v1.1/public/getticker?market=usdt-btc")
+  
+res <- GET(url)
+  
+content(res)
+```
+
+```{r}
+fromJSON(url)
+```
+
+Unfortunately it seems that the requests on this API cannot give us historical prices data.
+
+The github links given on the website seem not to be able to give historical data either:
+
+https://github.com/mwerner/bittrex
+https://github.com/toorop/go-bittrex
+https://github.com/ericsomdahl/python-bittrex
+
+
+
+So, I look for other sources that I checked another API platform:
+
+https://www.cryptocompare.com/api/#-api-data-pricehistorical-
+
+But here the historical data are also daily prices.
+The only advantage compared to the kaggle dataset is up-to-date data.
+But the effort to grasp the info from the API in order to have only one more month of historical data (kaggle data stops on the 22nd of september), seems quite big for the moment. Consequently this will be done only after a first test on the kaggle dataset. Once a shiny app is created, if there is time left, it will be used to implement a direct connexion to this API.
+
+
+Other sources:
+
+https://bitcoincharts.com/about/markets-api/
+https://bravenewcoin.com/api/digital-currency-historical-data/
+https://coinmetrics.io/data-downloads/
+https://www.coindesk.com/category/features/data-analysis/
+
+
+Potentially interesting API to explore:
+
+https://poloniex.com/public?command=returnChartData&currencyPair=BTC_ETH&start=1435699200&end=9999999999&period=14400
+
+https://poloniex.com/exchange#btc_eth
+https://poloniex.com/exchange#usdt_btc
+
+"One needs to edit the timestamps in the API to get a different snapshot. And edit the period to adjust the details." https://opendata.stackexchange.com/questions/6884/cryptocurrency-historical-prices
+
+https://www.quandl.com/data/BNC2-BNC-Digital-Currency-Indexed-EOD
+https://www.quandl.com/data/BNC1-BNC-Liquid-Index
+https://www.quandl.com/collections/markets/bitcoin-data
+
+
