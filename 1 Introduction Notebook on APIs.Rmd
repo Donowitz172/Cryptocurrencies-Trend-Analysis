@@ -94,13 +94,17 @@ https://github.com/ericsomdahl/python-bittrex
 
 
 
-So, I look for other sources that I checked another API platform:
+So, I look for other sources and checked another API platform:
 
 https://www.cryptocompare.com/api/#-api-data-pricehistorical-
 
 But here the historical data are also daily prices.
 The only advantage compared to the kaggle dataset is up-to-date data.
 But the effort to grasp the info from the API in order to have only one more month of historical data (kaggle data stops on the 22nd of september), seems quite big for the moment. Consequently this will be done only after a first test on the kaggle dataset. Once a shiny app is created, if there is time left, it will be used to implement a direct connexion to this API.
+
+## To see the fisrt test with CSV files download and see "Test with CSV files.Rmd"
+
+## After a few aptempts it appeared that it is not potentially much easier than using an API. I found the potential other API sources:
 
 
 Other sources:
@@ -123,5 +127,117 @@ https://poloniex.com/exchange#usdt_btc
 https://www.quandl.com/data/BNC2-BNC-Digital-Currency-Indexed-EOD
 https://www.quandl.com/data/BNC1-BNC-Liquid-Index
 https://www.quandl.com/collections/markets/bitcoin-data
+
+
+Here the most complete API for historical data seems to be the Poloniew one.
+
+
+## Test again with poloniex API
+
+```{r}
+library(jsonlite)
+library(glue)
+library(httr)
+```
+
+
+
+```{r}
+url <- glue("https://poloniex.com/public?command=returnChartData&currencyPair=USDT_BTC&start=1435699200&end=9999999999&period=14400")
+  
+res <- GET(url)
+  
+#content(res)
+
+```
+
+
+```{r}
+fromJSON(url)
+```
+
+Here we see that the date is in a UTC seconds format.
+We need a library to convert it in normal dates. The library "anytime" can help us.
+
+```{r}
+dataset <- fromJSON(url)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(dygraphs)
+library(stringr)
+
+?dygraph
+```
+
+
+```{r}
+#dataset %>% 
+##  group_by(date,high) %>% 
+#  dygraph()
+```
+
+```{r}
+#install.packages("anytime")
+```
+
+```{r}
+#library(anytime)
+library(lubridate)
+library(xts)
+
+```
+
+```{r}
+#dataset$date <- dataset[,"date"] %>% anytime()
+
+#dataset
+
+dataset$date <- as_datetime(dataset$date)
+```
+
+## The function "anytime" converts properly the UTC seconds time into a UTC time.
+
+```{r}
+open_price <- xts(dataset$open,dataset$date)
+
+#View(open_price)
+#tmp <- xts(open_price$open, open_price$date)
+#class(open_price)
+
+open_price %>% 
+  #group_by(date,open) %>%
+  dygraph()
+
+#  dygraph(xlab = date, ylab = open)
+```
+
+
+```{r}
+prices <- dataset %>%
+  select(date,open,close)
+
+#View(open_price)
+
+#class(open_price)
+
+prices %>% 
+  #group_by(date,open) %>%
+  dygraph()
+
+#  dygraph(xlab = date, ylab = open)
+```
+
+
+```{r}
+library(ggplot2)
+library(ggthemes)
+```
+
+```{r}
+open_price %>% ggplot(aes(x = date, y = open)) + geom_line()
+```
 
 

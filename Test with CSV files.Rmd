@@ -1,0 +1,76 @@
+---
+title: "Test with CSV files"
+output: html_notebook
+---
+
+## Test with csv by Sebastien Moeller:
+
+Now, we will import the data from the Kaggle dataset:
+
+(We quickly define the function to import csv files beforehand)
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(dygraphs)
+library(stringr)
+library(assertthat)
+```
+
+```{r}
+my_csv_reader <- function(dir_path = getwd()){
+  assert_that(is.dir(dirname(dir_path)))
+  assert_that(is.readable(dirname(dir_path)))
+
+  csvs <- list.files(path = dir_path, pattern = "*\\.csv$",full.names = TRUE)
+  names <- lapply(csvs, basename)
+  csv_list <- lapply(csvs, read.csv)
+  
+  out <- c(names, csv_list)
+  return(out)
+}
+```
+
+
+```{r}
+output <- my_csv_reader("Top100Cryptos")
+
+names <- output[1:101]
+data <- output[102:202]
+```
+
+## Show graphs of price over time [shiny?!?!?]
+
+```{r}
+str(data[[2]])
+```
+```{r}
+library(ggplot2)
+
+test <- data[[2]]
+
+# The data set moves backward through time down the rows so I reversed the order
+
+x <- seq(1:length(test$Open))
+y1 <- rev(test$Low)
+y2 <- rev(test$High)
+
+require(ggplot2)
+
+ggplot(test, aes(x)) +                  # basic graphical object
+  geom_path(aes(y=y1), colour="red") +  # first layer  DAY LOW
+  geom_path(aes(y=y2), colour="green")  # second layer DAY HIGH
+```
+
+```{r}
+ggplot(test, aes(x)) + 
+  geom_ribbon(aes(ymin = y1, ymax = y2, fill = "Name"))
+```
+
+```{r}
+# Have not yet corrected for reverse time so plot is backwards
+ggplot(data[[2]], aes(seq(1:length(data[[2]]$Date)))) + 
+  geom_ribbon(aes(ymin = data[[2]]$Low, ymax = data[[2]]$High, fill = names[[2]]))
+
+```
+
