@@ -129,10 +129,12 @@ https://www.quandl.com/data/BNC1-BNC-Liquid-Index
 https://www.quandl.com/collections/markets/bitcoin-data
 
 
-Here the most complete API for historical data seems to be the Poloniew one.
+Here the most complete API for historical data seems to be the Poloniex one.
+
+## To see the test on the Poloniex API download and see "Test with Poloniex API"
 
 
-## Test again with poloniex API
+## Test with poloniex API
 
 ```{r}
 library(jsonlite)
