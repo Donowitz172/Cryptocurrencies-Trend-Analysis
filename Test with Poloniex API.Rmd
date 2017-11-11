@@ -1,0 +1,114 @@
+---
+title: "Test with Poloniex API"
+output: html_notebook
+---
+
+## Test with poloniex API
+
+```{r}
+library(jsonlite)
+library(glue)
+library(httr)
+```
+
+
+
+```{r}
+url <- glue("https://poloniex.com/public?command=returnChartData&currencyPair=USDT_BTC&start=1435699200&end=9999999999&period=14400")
+  
+res <- GET(url)
+  
+#content(res)
+
+```
+
+
+```{r}
+fromJSON(url)
+```
+
+Here we see that the date is in a UTC seconds format.
+We need a library to convert it in normal dates. The library "anytime" can help us.
+
+```{r}
+dataset <- fromJSON(url)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(dygraphs)
+library(stringr)
+
+?dygraph
+```
+
+
+```{r}
+#dataset %>% 
+##  group_by(date,high) %>% 
+#  dygraph()
+```
+
+```{r}
+#install.packages("anytime")
+```
+
+```{r}
+#library(anytime)
+library(lubridate)
+library(xts)
+
+```
+
+```{r}
+#dataset$date <- dataset[,"date"] %>% anytime()
+
+#dataset
+
+dataset$date <- as_datetime(dataset$date)
+```
+
+## The function "anytime" converts properly the UTC seconds time into a UTC time.
+
+```{r}
+open_price <- xts(dataset$open,dataset$date)
+
+#View(open_price)
+#tmp <- xts(open_price$open, open_price$date)
+#class(open_price)
+
+open_price %>% 
+  #group_by(date,open) %>%
+  dygraph()
+
+#  dygraph(xlab = date, ylab = open)
+```
+
+
+```{r}
+prices <- dataset %>%
+  select(date,open,close)
+
+#View(open_price)
+
+#class(open_price)
+
+prices %>% 
+  #group_by(date,open) %>%
+  dygraph()
+
+#  dygraph(xlab = date, ylab = open)
+```
+
+
+```{r}
+library(ggplot2)
+library(ggthemes)
+```
+
+```{r}
+open_price %>% ggplot(aes(x = date, y = open)) + geom_line()
+```
+
+
