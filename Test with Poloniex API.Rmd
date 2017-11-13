@@ -35,6 +35,8 @@ usdt_nxt
 usdt_rep
 
 
+##Up-to-date code (for final version)
+
 ```{r}
 library(jsonlite)
 library(glue)
@@ -73,11 +75,14 @@ market <- function(currencyPair) {
 ```
 
 ```{r}
-market(currencyPair = "USDT_BCH")
+market(currencyPair = "USDT_ETH")
 ```
 
+
+## Previous code working:
+
 ```{r}
-currencyPair = "usdt_btc"
+currencyPair = "USDT_BTC"
 
 url <- glue("https://poloniex.com/public?command=returnChartData&currencyPair={currencyPair}&start=1435699200&end=9999999999&period=14400")
   
@@ -97,10 +102,6 @@ dataset <- fromJSON(url)
 ```
 
 ```{r}
-
-```
-
-```{r}
 dataset$date <- as_datetime(dataset$date)
 ```
 
@@ -111,13 +112,21 @@ open_price %>% dygraph()
 
 ```
 
-
-
-## The function "anytime" converts properly the UTC seconds time into a UTC time.
+## Test with more graph displayed on one (open, close, etc)
 
 ```{r}
+prices <- xts(dataset$open,dataset$date)
 
+prices %>% dygraph()
 ```
+
+```{r}
+?dygraph
+```
+
+
+### Even older code
+## The function "anytime" converts properly the UTC seconds time into a UTC time.
 
 
 ```{r}
@@ -140,7 +149,16 @@ prices %>%
 ?data.frame
 ```
 
-```{r}
+## Quick test on webscraping
 
+
+```{r}
+library(rvest)
+```
+
+```{r}
+url <- read_html("https://coinpedia.org/currency/bitcoin-cash/")
+
+text <- html_nodes(url,'.elementor-text-editor p') %>% html_text()
 ```
 

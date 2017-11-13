@@ -233,8 +233,8 @@ ui <- fluidPage(
   titlePanel("Cryptocurrencies historical prices : "),
   sidebarLayout(
     sidebarPanel(
-      selectInput(inputId = "CryptoPair", label = "Choose: ",
-            selected = "USDT_BTC",
+      selectInput(inputId = "CryptoPair", label = "Choose the market: ",
+            selected = "USDT_BCH",
             multiple = FALSE,
             choices = list_of_pairs
       )
@@ -258,11 +258,13 @@ server <- function(input, output) {
     res <- GET(url)
     dataset <- fromJSON(url)
     dataset$date <- as_datetime(dataset$date)
-    prices <- xts(dataset$open,dataset$date)
+    prices <- xts(dataset$open, dataset$date)
 
+    #prices %>% dygraph()
+    
     #volumes <- xts(dataset$volume,dataset$date)
 
-    prices %>% dygraph()
+    
 
   }
   
