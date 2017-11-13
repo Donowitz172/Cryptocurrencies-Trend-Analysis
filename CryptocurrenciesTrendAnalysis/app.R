@@ -206,6 +206,7 @@ library(shiny)
 library(jsonlite)
 library(glue)
 library(httr)
+library(rvest)
 
 library(lubridate)
 library(xts)
@@ -215,36 +216,70 @@ library(tidyr)
 library(dygraphs)
 library(stringr)
 
-list_of_pairs <- c("USDT_BTC",
-                   "USDT_BCH",
-                   "USDT_ETH",
-                   "USDT_ETC",
-                   "USDT_LTC",
-                   "USDT_ZEC",
-                   "USDT_XRP",
-                   "USDT_XMR",
-                   "USDT_STR",
-                   "USDT_DASH",
-                   "USDT_NXT",
-                   "USDT_REP")
 
+list_of_pairs1 <- c("BITCOIN",
+                    "BITCOIN CASH",
+                    "ETHEREUM",
+                    "ETHEREUM CLASSIC",
+                    "LITECOIN",
+                    "ZCASH",
+                    "RIPPLE",
+                    "MONERO",
+                    "STELLAR",
+                    "DASH",
+                    "NXT",
+                    "AUGUR")
+
+list_of_pairs2 <- c("USDT_BTC",## BITCOIN
+                    "USDT_BCH",## BITCOIN CASH
+                    "USDT_ETH",## ETHEREUM
+                    "USDT_ETC",## ETHEREUM CLASSIC
+                    "USDT_LTC",## LITECOIN
+                    "USDT_ZEC",## ZCASH
+                    "USDT_XRP",## RIPPLE
+                    "USDT_XMR",## MONERO
+                    "USDT_STR",## STELLAR
+                    "USDT_DASH",## DASH
+                    "USDT_NXT",## NXT
+                    "USDT_REP")## AUGUR
+
+list_of_pairs3 <- c("bitcoin/",## BITCOIN
+                    "bitcoin-cash/",## BITCOIN CASH
+                    "ethereum/",## ETHEREUM
+                    "ethereum-classic/",## ETHEREUM CLASSIC
+                    "litecoin",## LITECOIN
+                    "zcash",## ZCASH
+                    "ripple",## RIPPLE
+                    "monero/",## MONERO
+                    "stellar/",## STELLAR
+                    "dash/",## DASH
+                    "nxt/",## NXT
+                    "augur/")## AUGUR
+
+list_of_pairs <- cbind(list_of_pairs1,list_of_pairs2,list_of_pairs3)
 
 ui <- fluidPage(
   titlePanel("Cryptocurrencies historical prices : "),
   sidebarLayout(
     sidebarPanel(
+#      selectInput(inputId = "CryptoPair", label = "Choose the market: ",
       selectInput(inputId = "CryptoPair", label = "Choose the market: ",
             selected = "USDT_BCH",
             multiple = FALSE,
-            choices = list_of_pairs
-      )
-    ),
-    
+            choices = list_of_pairs[,2]
+      ),
 #       textInput("CryptoPair","(US Dollars - Cryptocurrencies Markets)",value = "USDT_BTC")
 #     ),
 
+      selectInput(inputId = "CryptoName", label = "And the corresponding description: ",
+                        selected = "bitcoin-cash/",
+                        multiple = FALSE,
+                        choices = list_of_pairs[,3]
+      )
+    ),
     mainPanel(
-      dygraphOutput("dessin")
+      dygraphOutput("dessin"),
+      textOutput("description")
     )
   )
 )
@@ -259,13 +294,14 @@ server <- function(input, output) {
     dataset <- fromJSON(url)
     dataset$date <- as_datetime(dataset$date)
     prices <- xts(dataset$open, dataset$date)
-
-    #prices %>% dygraph()
-    
+    prices %>% dygraph()
     #volumes <- xts(dataset$volume,dataset$date)
-
-    
-
+  }
+  
+  description_function <- function(CryptoName) {
+    url2 <- glue("https://coinpedia.org/currency/{CryptoName}") %>%
+      read_html()
+    text <- html_nodes(url2,'.elementor-text-editor p') %>% html_text()
   }
   
 #   # draw_names_dygraph <- function(names) {
@@ -282,9 +318,12 @@ server <- function(input, output) {
   # })
 
   output$dessin <- renderDygraph({
-    market(currencyPair = "CryptoPair")
+    market(currencyPair = input$CryptoPair)
   })
-
+  output$description <- renderText({
+    # "HELLO"
+   description_function(CryptoName = input$CryptoName)
+  })
 }
 
 #Run the app
