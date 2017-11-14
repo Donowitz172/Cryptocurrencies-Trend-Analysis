@@ -86,7 +86,7 @@ server <- function(input, output) {
     res <- GET(url)
     dataset <- fromJSON(url)
     dataset$date <- as_datetime(dataset$date)
-    prices <- xts(dataset$open, dataset$date)
+    prices <- xts(dataset$weightedAverage, dataset$date)
     prices %>% dygraph(main = "Price in US Dollars") %>% 
       dyRangeSelector()
 
