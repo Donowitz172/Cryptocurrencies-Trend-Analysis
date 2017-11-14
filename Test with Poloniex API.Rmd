@@ -9,29 +9,29 @@ output: html_notebook
 
 US Dollars - Cryptocurrencies Markets:
 
-## BITCOIN CASH
+# BITCOIN CASH
 usdt_bch
-## BITCOIN
+# BITCOIN
 usdt_btc
-## ETHEREUM
+# ETHEREUM
 usdt_eth
-## ETHEREUM CLASSIC
+# ETHEREUM CLASSIC
 usdt_etc
-## LITECOIN
+# LITECOIN
 usdt_ltc
-## ZCASH
+# ZCASH
 usdt_zec
-## RIPPLE
+# RIPPLE
 usdt_xrp
-## MONERO
+# MONERO
 usdt_xmr
-## STELLAR
+# STELLAR
 usdt_str
-## DASH
+# DASH
 usdt_dash
-## NXT
+# NXT
 usdt_nxt
-## AUGUR
+# AUGUR
 usdt_rep
 
 
@@ -58,7 +58,7 @@ market <- function(currencyPair) {
 
   url <- glue("https://poloniex.com/public?command=returnChartData&currencyPair={currencyPair}&start=1435699200&end=9999999999&period=14400")
   
-  res <- GET(url)
+  #res <- GET(url)
   
   dataset <- fromJSON(url)
   
@@ -95,15 +95,19 @@ fromJSON(url)
 ```
 
 Here we see that the date is in a UTC seconds format.
-We need a library to convert it in normal dates. The library "anytime" can help us.
+We need a library to convert it in normal dates. The library "lubridate" can help us.
 
 ```{r}
 dataset <- fromJSON(url)
 ```
 
+Converting into datetime:
+
 ```{r}
 dataset$date <- as_datetime(dataset$date)
 ```
+
+And then creating a time-series:
 
 ```{r}
 open_price <- xts(dataset$open,dataset$date)
@@ -112,42 +116,7 @@ open_price %>% dygraph()
 
 ```
 
-## Test with more graph displayed on one (open, close, etc)
 
-```{r}
-prices <- xts(dataset$open,dataset$date)
-
-prices %>% dygraph()
-```
-
-```{r}
-?dygraph
-```
-
-
-### Even older code
-## The function "anytime" converts properly the UTC seconds time into a UTC time.
-
-
-```{r}
-prices <- dataset %>%
-  select(date,open,close)
-
-#View(open_price)
-
-#class(open_price)
-
-prices %>% 
-  #group_by(date,open) %>%
-  dygraph()
-
-#  dygraph(xlab = date, ylab = open)
-```
-
-
-```{r}
-?data.frame
-```
 
 ## Quick test on webscraping
 
@@ -157,8 +126,20 @@ library(rvest)
 ```
 
 ```{r}
-url <- read_html("https://coinpedia.org/currency/bitcoin-cash/")
+Description_function <- function(CryptoName) {
 
-text <- html_nodes(url,'.elementor-text-editor p') %>% html_text()
+  url <- glue("https://coinpedia.org/currency/{CryptoName}") %>%
+    read_html()
+
+  text <- html_nodes(url,'.elementor-text-editor p') %>% html_text()
+  
+}
 ```
 
+```{r}
+description <- Description_function("litecoin")
+```
+
+```{r}
+description
+```
