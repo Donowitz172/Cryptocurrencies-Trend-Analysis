@@ -3,7 +3,7 @@ title: "Bittrex API"
 output: html_notebook
 ---
 
-#The aim of the project is to collect as precise as possible exchanges rates and other information on crypto-currencies (top 100) from their day of creation until today, in order to build potentially behavior models.
+###The aim of the project is to collect as precise as possible exchanges rates and other information on crypto-currencies (top 100) from their day of creation until today, in order to build potentially behavior models.
 
 For that, having as much information as possile might enable us to build models, however exchanges rates are depending on a potentially infinite number of parameters (individual behaviors, medias, economic growth, etc...) for which collecting data might be a incredible amount of work.
 
@@ -47,14 +47,14 @@ content(res)
 fromJSON(url)
 ```
 
-#This gives us only the different markets.
+###This gives us only the different markets.
 
 
-#Now let's try the method /public/getticker
+###Now let's try the method /public/getticker
 
 Used to get the current tick values for a market.
 
-#Parameters:
+###Parameters:
 parameter	required	description
 market	required	a string literal for the market (ex: BTC-LTC)
 Request:
@@ -86,7 +86,7 @@ content(res)
 fromJSON(url)
 ```
 
-#Unfortunately it seems that the requests on this API cannot give us historical prices data.
+###Unfortunately it seems that the requests on this API cannot give us historical prices data.
 
 The github links given on the website seem not to be able to give historical data either:
 
@@ -104,9 +104,9 @@ But here the historical data are also daily prices.
 The only advantage compared to the kaggle dataset is up-to-date data.
 But the effort to grasp the info from the API in order to have only one more month of historical data (kaggle data stops on the 22nd of september), seems quite big for the moment. Consequently this will be done only after a first test on the kaggle dataset. Once a shiny app is created, if there is time left, it will be used to implement a direct connexion to this API.
 
-## To see the first test with CSV files download and see "Test with CSV files.Rmd"
+###To see the first test with CSV files download and see "Test with CSV files.Rmd"
 
-# After a few atempts it appeared that it is not potentially much easier than using an API. I found other API sources:
+###After a few atempts it appeared that it is not potentially much easier than using an API. I found other API sources:
 
 
 Other sources:
@@ -131,8 +131,8 @@ https://www.quandl.com/data/BNC1-BNC-Liquid-Index
 https://www.quandl.com/collections/markets/bitcoin-data
 
 
-#Here the most complete API for historical data seems to be the Poloniex one.
+###Here the most complete API for historical data seems to be the Poloniex one.
 
-## To see the test on the Poloniex API download and see "Test with Poloniex API"
+###To see the test on the Poloniex API download and see "Test with Poloniex API"
 
 

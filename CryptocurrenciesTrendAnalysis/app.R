@@ -1,3 +1,13 @@
+## The general idea of this App was to be able to select a cryptocurrency in a list
+## and have a graph displaying its historical price and a text giving a description
+## of that currency.
+##
+## However, I did not manage to connect the two inputId (one for API and one for Webscraping)
+## so that both the graph and the description update simultaneously.
+##
+## What I managed to do is two choicelists: one that updates the graph and one that
+## updates the description. And the user has to make them match.
+
 library(shiny)
 
 library(jsonlite)

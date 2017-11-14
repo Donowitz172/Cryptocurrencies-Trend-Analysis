@@ -3,35 +3,35 @@ title: "Test with Poloniex API"
 output: html_notebook
 ---
 
-## Test with poloniex API
+### Test with poloniex API
 
-## List of currency pairs:
+### List of currency pairs:
 
 US Dollars - Cryptocurrencies Markets:
 
-# BITCOIN CASH
+### BITCOIN CASH
 usdt_bch
-# BITCOIN
+### BITCOIN
 usdt_btc
-# ETHEREUM
+### ETHEREUM
 usdt_eth
-# ETHEREUM CLASSIC
+### ETHEREUM CLASSIC
 usdt_etc
-# LITECOIN
+### LITECOIN
 usdt_ltc
-# ZCASH
+### ZCASH
 usdt_zec
-# RIPPLE
+### RIPPLE
 usdt_xrp
-# MONERO
+### MONERO
 usdt_xmr
-# STELLAR
+### STELLAR
 usdt_str
-# DASH
+### DASH
 usdt_dash
-# NXT
+### NXT
 usdt_nxt
-# AUGUR
+### AUGUR
 usdt_rep
 
 
